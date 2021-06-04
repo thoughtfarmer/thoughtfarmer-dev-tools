@@ -1,0 +1,75 @@
+.tfc-form-input {
+
+    margin-bottom: 1em;   
+
+    .tfc-input-label {
+        font-weight: 700;
+        margin-right: .75em;
+    }
+
+    .tfc-required-icon {
+        color: #aa1c2d;
+        line-height: 1.5em;
+        margin-left: 4px;
+        font-weight: 600;
+    }
+
+    &.tfc-dropdown {
+        select {
+            padding: 4px;
+        }
+    }
+
+    &.tfc-likert {
+        .likertResponse {
+            cursor: pointer;
+        }
+
+        .likertLegend {
+            font-weight: 700;
+        }      
+    }
+
+    &.tfc-text {
+        input {
+            padding: 4px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        &.tfc-field-has-error input {
+            border: 1px solid #aa1c2d;
+        }
+    }
+
+    .tfc-radio .tfc-input-label, .tfc-checkbox .tfc-input-label, .tfc-help-text {
+        margin-bottom: .5em;
+    }
+
+    .tfc-help-text {
+        color: #666666;
+        font-size: 0.875em;
+        line-height: 1.5;
+        font-weight: 400;
+    }
+
+    .tfc-option {
+        display: block;
+        margin-left: .5em;
+        margin-bottom: .25em;
+        cursor: pointer;
+    }
+
+    &.tfc-checkbox {
+        .tfc-option {
+            display: inline-flex;
+            align-items: center;
+            padding-bottom: 4px;
+            width: 100%;
+
+            input {
+                margin-right: 6px;
+            }
+        }
+    }
+}

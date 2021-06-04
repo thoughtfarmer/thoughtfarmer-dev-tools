@@ -1,0 +1,9 @@
+dist/
+node_modules/
+legacy/
+*.json
+*.scss
+*.css
+*.md
+*.html
+assets/

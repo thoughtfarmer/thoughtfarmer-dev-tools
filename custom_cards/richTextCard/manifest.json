@@ -1,0 +1,18 @@
+{
+    "name": "Security aware Rich Text",
+    "description": "Pulls in RTE body content from a single page. Nothing will show to users without view permission.",
+    "url": "",
+    "isActive": true,
+    "customCardTemplateType": 0,
+    "isAdminOnly": false,
+    "canOverrideConfig": true,
+    "isTransformDisabled": true,
+    "defaultConfiguration": {
+        "sourceId": 0,
+        "showTitle": false,
+        "alternateTitle": null,
+        "icon": "",
+        "useSummary": true,
+        "hideBottomBorder": false
+    }
+}

@@ -1,0 +1,521 @@
+const gulp = require('gulp');  
+const rollup = require('rollup');
+const fs = require('fs');
+const util = require('util'); 
+const commonjs = require('rollup-plugin-commonjs');  
+const resolve = require('rollup-plugin-node-resolve'); 
+const file = require('gulp-file');
+const sourcemaps = require('gulp-sourcemaps');
+const rollupSourcemaps = require('rollup-plugin-sourcemaps');
+const babel = require('rollup-plugin-babel');
+const plumber = require('gulp-plumber');
+const request = require('request');
+const colors = require('colors');
+const log = require('fancy-log');
+const replace = require('rollup-plugin-replace');
+const envify = require('process-envify');
+const gulpif = require('gulp-if');
+const scss = require('rollup-plugin-scss');
+const sass = require('gulp-sass'); 
+sass.compiler = require('node-sass');
+const moduleImporter = require('sass-module-importer');
+const path = require('path');
+const gulpReplace = require('gulp-replace');
+const inquirer = require('inquirer');
+
+
+// Replace node variables in included node_module plugins (if any)
+const NODE_ENV = process.env.NODE_ENV || 'development';
+<<<<<<< HEAD
+const DRAGGABLE_DEBUG = process.env.DRAGGABLE_DEBUG || 'development';
+=======
+const DRAGGABLE_DEBUG = process.env.DRAGGABLE_DEBUG || 'production';
+>>>>>>> 121594f1a697d7ad6ef027e0bd8669805507d018
+const env = {
+    NODE_ENV,
+    DRAGGABLE_DEBUG
+};
+
+// fetch command line arguments
+const arg = (argList => {
+
+    let arg = {}, a, opt, thisOpt, curOpt;
+    for (a = 0; a < argList.length; a++) {  
+        thisOpt = argList[a].trim();
+        opt = thisOpt.replace(/^\-+/, '');  
+
+        if (opt === thisOpt) {  
+            // argument value
+            if (curOpt) {
+                arg[curOpt] = opt;
+            }
+            curOpt = null;  
+        } else {  
+            // argument name
+            curOpt = opt;
+            arg[curOpt] = true;  
+        }  
+    }  
+    if (!arg['site']) {
+        arg['site'] = 'default';
+    }
+
+    return arg;
+  
+})(process.argv);
+
+// parse the folder name
+let foldersInPath = process.env.INIT_CWD.split('\\');
+let folderName = foldersInPath[foldersInPath.indexOf('CustomCards') + 1];
+
+if (arg.folderName) {
+    folderName = arg.folderName;
+}
+
+
+
+function getConfigOrNull(configFilePath) {
+    if (!fs.existsSync(configFilePath)) {
+        return null;
+    }
+    const rawData = fs.readFileSync(configFilePath);
+    return JSON.parse(rawData);
+}
+
+const cardConfig = getConfigOrNull(`./${folderName}/config.json`);
+const buildConfig = getConfigOrNull('./config.json');
+const entryFile = !fs.existsSync(`./${folderName}/${folderName}.tsx`) ? `./${folderName}/${folderName}.jsx` : `./${folderName}/${folderName}.tsx`;
+
+const site = buildConfig.sites[arg.site];
+const customPortletId = !site || !cardConfig || typeof(cardConfig.sites[arg.site]) === 'undefined' ? undefined : cardConfig.sites[arg.site].id;
+const bypassServerTransform = cardConfig && typeof(cardConfig.bypassServerTransform) !== 'undefined' ? cardConfig.bypassServerTransform : true;
+
+const rollupGlobals = { 'react': 'React', 'react-dom': 'ReactDOM', pikaday: 'Pikaday' , 'styled-components': 'styled'};
+const rollupExternals = ['react', 'pikaday', 'react-dom', 'styled-components'];
+const babelConfig = {    
+    extensions: ['.js', '.jsx', '.ts', '.tsx'],
+    presets: [    
+        ['@babel/preset-typescript',            
+            {
+                'modules': false
+            }      
+        ],     
+        [      
+            '@babel/preset-env',
+            {
+                'modules': false
+            }        
+        ], 
+        [
+            '@babel/preset-react',
+            {        
+                'throwIfNamespace': false // defaults to true
+            }
+        ],     
+       
+    ],
+    sourceMaps: buildConfig.sourceMaps,
+    inputSourceMap: buildConfig.sourceMaps,
+    exclude: 'node_modules/**',
+    plugins: [   
+        ['@babel/plugin-proposal-decorators', { 'legacy': true }],
+        ['@babel/plugin-proposal-class-properties', { 'loose': true }]        
+    ],
+    externalHelpers: true,
+    babelrc: false
+};
+
+const rollupInputOptions = {
+    external: rollupExternals,
+    input: entryFile,
+    plugins: [     
+        resolve({
+            extensions: [ '.mjs', '.js', '.jsx', '.json' , '.tsx', '.ts']            
+        }),
+        scss({
+            output: `./${folderName}/dist/bundle.css`
+        }),
+        rollupSourcemaps(),
+        replace(envify(env)),
+        commonjs({
+            include: 'node_modules/**',
+            namedExports: {
+                'node_modules/react-is/index.js': [ 'ForwardRef' ],
+                'node_modules/prop-types/index.js': [ 'element', 'elementType' ],
+                'react-js': ['isValidElementType']
+            }
+        }),       
+        babel(babelConfig),      
+    ]
+};
+
+const rollupOutputOptions = {
+    sourcemap: buildConfig.sourceMaps,   
+    globals: rollupGlobals,
+    format: 'iife',
+    name: folderName
+};
+
+async function build() {
+    const bundle = await rollup.rollup(rollupInputOptions);
+    const gen = await bundle.generate(rollupOutputOptions);
+    gen.output.forEach(output => {
+        if (buildConfig.sourceMaps) {
+            output.code += `\n//# sourceURL=${folderName}.js`;
+            output.code += `\n//# sourceMappingURL=${output.map.toUrl()}`;
+        }
+    });
+    return gen;
+}
+
+function hasMissingParameters(checkSite, checkFolder, checkCard, sourceMaps) {
+    var missingParameters = false;
+
+    if (checkSite && !site) {
+        log.warn('No api configuration found for the site ' + arg.site.yellow + '. Check the ' + 'config.json'.magenta + ' in the root folder.');
+        missingParameters = true;
+    }
+
+    if (checkCard && !customPortletId) {
+        log.warn('No custom portlet id found for ' + arg.site.yellow + '. Check the ' + 'config.json'.magenta + ' in the folder ' + folderName.yellow);
+        missingParameters = true;
+    }
+
+    if (checkFolder && !folderName) {
+        log.warn('No custom card folder name found. Use ' + '--folderName'.yellow + ' myCardFolder'.magenta + ' , or run the command from the card folder.');
+        missingParameters = true;
+    }
+
+    if (sourceMaps && buildConfig.sourceMaps && !fs.existsSync(buildConfig.sourceMapsFolder)) {
+        log.warn('Source maps is enabled but could not find source Maps folder ' + build.sourceMapsFolder.yellow + '. Check the ' + 'config.json'.magenta + ' in the root folder.');
+        missingParameters = true;
+    }
+
+    return missingParameters;
+}
+
+
+gulp.task('sass', async () => {
+    if (hasMissingParameters(false, true, false, false)) {
+        return Promise.reject('Parameter validation failed');
+    }
+    log('Compiling sass...');
+  
+    return gulp.src(`./${folderName}/${folderName}.scss`)
+        .pipe(sass({
+            importer: moduleImporter()
+        }).on('error', sass.logError))
+        .pipe(gulp.dest(`./${folderName}/dist/`));
+});
+
+gulp.task('build', async () => {
+    if (hasMissingParameters(false, true, false, true)) {
+        return Promise.reject('Parameter validation failed');
+    }
+    log('Building custom card ' + folderName.magenta);   
+    const gen = await build();
+    return file(`${folderName}.js`, gen.output[0].code, { src: true })
+        .pipe(plumber())
+        .pipe(gulpif(buildConfig.sourceMaps, sourcemaps.init({ loadMaps: true })))
+        .pipe(gulpif(buildConfig.sourceMaps, sourcemaps.write('./')))
+        .pipe(gulpif(buildConfig.sourceMaps, gulpReplace(`sourceMappingURL=${folderName}.js.map`, `sourceMappingURL=${buildConfig.sourceMapsRelativeUrl}/${folderName}.js.map`)))
+        .pipe(gulp.dest(`${folderName}/dist`));
+});
+
+gulp.task('move-sourcemaps', () => {
+    if (!buildConfig.sourceMaps) {
+        log('Building sourcemaps is disabled. Nothing to move.');
+        return Promise.resolve();
+    }
+    const mapPath = `./${folderName}/dist/${folderName}.js.map`;
+    if (!fs.existsSync(mapPath)) {        
+        return Promise.reject('Source map not found at ' + mapPath.magenta + '. Be sure to run build with ' + 'sourcemaps'.yellow + ' set to true in the ' + 'config.json'.magenta + ' file');
+    }
+
+    return gulp.src(mapPath)        
+        .pipe(gulp.dest(buildConfig.sourceMapsFolder));
+});
+
+// Promisify for use in gulp tasks
+const patchRequestPromise = util.promisify(request.patch);
+const postRequestPromise = util.promisify(request.post);
+const getRequestPromise = util.promisify(request.get);
+
+gulp.task('auth-test', async () => {    
+    if (hasMissingParameters(true, false, false)) {
+        return Promise.reject('Parameter validation failed');
+    }
+
+    log('Testing authentication to site url ' + site.baseUrl.magenta);
+
+    const response = await getRequestPromise({
+        url: `${site.baseUrl}/api/users/current`,
+        headers: {
+            'Authorization': site.restToken
+        }
+    });
+
+    if (response.statusCode === 200) {
+        log('Response: ' + response.statusCode.toString().yellow + ' ' + response.statusMessage.green);
+        const user = JSON.parse(response.body);
+        log('Logged on as ' + `${user.firstName} ${user.lasName}`.cyan + ' with username ' + user.username.magenta);
+    } else {
+        log.error('Response: ' + response.statusCode.toString().red + ' ' + response.statusMessage.orange);
+    }
+});
+
+gulp.task('clean', async () => {
+    if (hasMissingParameters(false, true, false)) {
+        return Promise.reject('Parameter validation failed');
+    }
+
+    const directory = `./${folderName}/dist`;
+    if (!fs.existsSync(directory)) {
+        return Promise.resolve();
+    }
+    return await fs.readdir(directory, (err, files) => {        
+        if (err) { 
+            Promise.reject(err); 
+        }
+      
+        for (const file of files) {
+            fs.unlink(path.join(directory, file), err => {
+                if (err) {
+                    Promise.reject(err);
+                }
+            });
+        }
+       
+    });    
+});
+
+function getFileOrEmpty(fileName, encoding = 'utf8') {
+    try {
+        let fileData = fs.readFileSync(fileName, { encoding });
+
+        // If there are no imports in js files, then the bundle.css will simply say undefined. Must return emtpy instead.
+        if (fileName.indexOf('bundle.css') > -1 && fileData.indexOf('undefined') === 0) {
+            fileData = '';
+        }
+        return fileData;
+    } catch (_e) {
+        log.warn('WARNING:'.yellow + ' File at path ' + fileName.magenta + ' not found. Returning empty string.');
+        return '';
+    }
+}
+
+gulp.task('push', async () => {
+    if (hasMissingParameters(true, true, true, false)) {
+        return Promise.reject('Parameter validation failed');
+    }
+    
+    log('Pushing custom card code to site url ' + site.baseUrl.magenta + ' with custom portlet id ' + customPortletId.yellow + ' ...');
+
+    const response = await patchRequestPromise({
+        url: `${site.baseUrl}/api/customportlets/${customPortletId}`,
+        body: JSON.stringify({
+            portletTemplateId: customPortletId,
+            clientTemplate: getFileOrEmpty(`./${folderName}/dist/${folderName}.js`), 
+            styleTemplate:  getFileOrEmpty(`./${folderName}/dist/${folderName}.css`) + '\n' + getFileOrEmpty(`./${folderName}/dist/bundle.css`),
+            htmlTemplate:  getFileOrEmpty(`./${folderName}/${folderName}.html`),
+            isCurrent: true,
+            //customCardTemplateType: ,
+            isTransformDisabled: bypassServerTransform
+        }),
+        headers: {
+            'Authorization': site.restToken,
+            'Content-Type': 'application/json'
+        }
+    });
+
+    if (response.statusCode === 200) {
+        log('Response: ' + response.statusCode.toString().yellow + ' ' + response.statusMessage.green);
+    } else {
+        log.error('Response: ' + response.statusCode.toString().red + ' ' + response.statusMessage.orange);
+    }
+});
+
+gulp.task('upgrade', async () => {
+    if (hasMissingParameters(true, true, true, false)) {
+        return Promise.reject('Parameter validation failed');
+    }
+
+    log('Upgrading custom card at site url ' + site.baseUrl.magenta + ' with custom portlet id ' + customPortletId.yellow + ' ...');
+
+    const response = await postRequestPromise({
+        url: `${site.baseUrl}/api/customportlets/${customPortletId}/upgrade`,
+        headers: {
+            'Authorization': site.restToken,
+        }
+    });
+
+    if (response.statusCode === 200) {
+        log('Response: ' + response.statusCode.toString().yellow + ' ' + response.statusMessage.green);
+    } else {
+        log('Response: ' + response.statusCode.toString().red + ' ' + response.statusMessage.orange);
+    }
+});
+
+
+// Gulp-file seems to signal it is complete before the operation has actually flushed to disk.
+// This is a workaround. Long files may take longer to completely flush. Adjust buildConfig.fileWait accordingly.
+gulp.task('wait', () => {
+    if (!fs.existsSync(`./${folderName}//dist/${folderName}.js`) || !fs.existsSync(`./${folderName}//dist/${folderName}.css`)) {
+        log('Files not found. Wait a millisec...');
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                resolve();
+            }, buildConfig.fileWait || 100);
+        });
+    } else {
+        return Promise.resolve();
+    }       
+});
+
+gulp.task('newcard', async (done) => {
+    const answer = await inquirer
+        .prompt([{
+            type: 'input',
+            name: 'cardName',
+            message: 'Enter camel case name of new card:',
+            validate: (value_1) => {
+                if (typeof value_1 === undefined || !value_1.length) {
+                    return 'Must enter a name';
+                }
+                value_1.replace(/[\^#%&$*:<>?/{|}\s()]/g, '');
+                return true;
+            }
+        },
+        {
+            type: 'expand',
+            name: 'cardType',
+            message: 'Using .tsx or .jsx?',
+            choices: [{
+                key: 't',
+                value: 'tsx'
+            }, {
+                key: 'j',
+                value: 'jsx'
+            }]
+        },
+        {
+            type: 'input',
+            name: 'customPortletId',
+            message: 'Enter custom portlet id for site:',
+            validate: (value_3) => {
+                if (typeof + value_3 !== 'number' || +value_3 < 0) {
+                    return 'Must enter a number over 0.';
+                }
+                return true;
+            }
+        }
+        ]);
+
+    var configContents = `{
+        "sites": {
+            "default": {
+                "id": "${answer.customPortletId}"
+            }
+        }
+    }`;
+    
+
+    fs.mkdirSync(`./${answer.cardName}`);
+    fs.mkdirSync(`./${answer.cardName}/components`);
+    fs.writeFileSync(`./${answer.cardName}/${answer.cardName}.${answer.cardType}`, '');
+    fs.writeFileSync(`./${answer.cardName}/${answer.cardName}.scss`, '');
+    fs.writeFileSync(`./${answer.cardName}/config.json`, configContents);
+    done();
+    log(`Successfully created new card ${answer.cardName} with custom portlet id ${answer.customPortletId}.`);
+
+});
+
+gulp.task('manifest:create', async (done) => {
+    if (hasMissingParameters(false, true, false, false)) {
+        return Promise.reject('Parameter validation failed');
+    }
+
+    const answer = await inquirer
+        .prompt([{
+            type: 'input',
+            name: 'name',
+            message: 'Name of the card: ',
+            validate: (value) => {
+                if (!value.length) {
+                    return 'Name is required.';
+                }
+                return true;
+            }
+        },{
+            type: 'input',
+            name: 'description',
+            message: 'Description of the card (optional): ',
+            default: ''
+        },{
+            type: 'input',
+            name: 'url',
+            message: 'Url for the card (optional): ',
+            default: ''
+        },{
+            type: 'confirm',
+            name: 'isActive',
+            message: 'Activate the card?',
+            default: 'Y'
+        },
+        {
+            type: 'expand',
+            name: 'customCardTemplateType',
+            message: 'Global card or page card?',
+            choices: [{
+                key: 'g',
+                value: 1
+            }, {
+                key: 'p',
+                value: 0
+            }],
+            default: 'p'
+        },
+        {
+            type: 'confirm',
+            name: 'isAdminOnly',
+            message: 'Is admin only?',
+            default: 'N'
+        },
+        {
+            type: 'confirm',
+            name: 'canOverrideConfig',
+            message: 'Can override config on template page?',
+            default: 'N'
+        }
+        ]);
+
+    answer.isTransformDisabled = true;
+    answer.defaultConfiguration = '';
+    
+    fs.writeFileSync(`./${folderName}/manifest.json`, JSON.stringify(answer, 4));
+    done();
+    log('Finished creating manifest.json file with data');
+    log(answer);
+
+});
+
+gulp.task('manifest:config', async (done) => {
+    if (hasMissingParameters(false, true, false, false)) {
+        return Promise.reject('Parameter validation failed');
+    }
+
+    if (!fs.existsSync(`./${folderName}//porletConfig.js`)) {
+        log.error('Missing portletConfig.js file. Cannot generate default config');
+    } else {
+        
+    }
+    
+    done();
+});
+
+
+gulp.task('deploy',  gulp.series('clean', 'build', 'sass', 'wait', 'push', 'upgrade', 'move-sourcemaps'));
+
+gulp.task('compile', gulp.parallel('build', 'sass'));
+
+

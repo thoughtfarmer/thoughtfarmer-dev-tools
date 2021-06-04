@@ -1,0 +1,26 @@
+{  
+  "compilerOptions": {
+    "baseUrl": "./",
+    "module": "es2015",
+    "moduleResolution": "node",
+    "target": "es5",
+    "jsx": "react",
+    "sourceMap": true,
+    "experimentalDecorators": true,
+    "skipDefaultLibCheck": true,
+    "strict": false,
+    "noImplicitAny": false,
+    "noImplicitReturns": true, 
+    "allowUnusedLabels":  false,
+    "allowSyntheticDefaultImports": true,
+    "noFallthroughCasesInSwitch":  true,
+    "allowUmdGlobalAccess": true,
+    "lib": ["es6", "dom"]   
+  },
+  "exclude": [
+      "bin",
+      "node_modules",
+      "dist",
+      "obj"
+  ]
+}

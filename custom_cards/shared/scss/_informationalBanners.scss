@@ -1,0 +1,36 @@
+.tfc-error, .tfc-success, .tfc-warning, .tfc-information {
+    margin-bottom: 18px;
+    padding: 15px 35px 15px 14px;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+    text-align: center;
+    min-height: 15px;
+    font-size: 16px;
+    position: relative;
+    i {
+        margin-right: 8px;
+    }
+}
+
+.tfc-success {
+    color: #468847;
+    background-color: #DFF0D8;
+    border-color: #D6E9C6;
+}
+
+.tfc-error {
+    color: #B94A48;
+    background-color: #F2DEDE;
+    border-color: #EED3D7;
+}
+
+.tfc-warning {
+    color: #C09853;
+    background-color: #FCF8E3;
+    border: #FBEED5;
+}
+
+.tfc-information {
+    color: #3A87AD;
+    background-color: #D9EDF7;
+    border-color: #BCE8F1;
+}

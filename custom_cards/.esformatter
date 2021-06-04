@@ -1,0 +1,29 @@
+{
+  "indent": {
+    "value": "    "
+  },
+  "plugins": [
+    "esformatter-jsx",
+    "esformatter-quotes"//,
+    //"esformatter-semicolons"
+  ],
+  "quotes": {
+      "type": "single",
+      "avoidEscape": false
+  },
+  "jsx": {
+    "formatJSX": true,
+    "attrsOnSameLineAsTag": false,
+    "maxAttrsOnTag": 3,
+    "firstAttributeOnSameLine": true,
+    "spaceInJSXExpressionContainers": "",
+    "alignWithFirstAttribute": true,
+    "htmlOptions": {
+      "brace_style": "collapse",
+      "indent_char": " ",
+      "indent_size": 4,
+      "max_preserve_newlines": 2,
+      "preserve_newlines": true
+    }
+  }
+}

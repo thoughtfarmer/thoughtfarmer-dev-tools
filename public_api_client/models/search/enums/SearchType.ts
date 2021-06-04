@@ -1,0 +1,20 @@
+export enum SearchType {
+    None,
+    Pages,
+    Files,
+    People,
+    Groups,
+    NewsBlog,
+    Forums,
+    Calendars,
+    PhotoGalleries,
+    Links,
+    Polls,
+    MailingLists,
+    Comments = 12,
+    MicroBlogEntry,
+    ShoutOut,
+    Forms,
+    Entries,
+    EntryLists
+}

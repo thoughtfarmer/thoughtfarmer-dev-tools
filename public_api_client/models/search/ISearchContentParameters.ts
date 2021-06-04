@@ -1,0 +1,43 @@
+import DateFacetRange from './enums/DateFacetRange';
+import SearchType from './enums/SearchType';
+import SortType from './enums/SortType';
+import SortDirection from './enums/SortDirection';
+import PageType from '../content/PageType';
+
+export interface ISearchContentParameters {
+    excludeContentIds?: number[];
+    excludePageTypes?: PageType[];
+    excludeTreePath?: number[];
+    forArea?: SearchArea;
+    forCulture?: string;
+    forEditedBy?: number[];
+    forMentioned?: number[];
+    forRequireAllUsersMentioned?: boolean;
+    forFirstLetterOfTitle?: string;
+    forOwnedBy?: number[];
+    forPostedDate?: DateFacetRange;
+    rangedPostedDateStart?: string;
+    rangedPostedDateEnd?: string;
+    forPublishedDate?: DateFacetRange;
+    rangedPublishedDateStart?: string;
+    rangedPublishedDateEnd?: string;
+    forQuery?: string;
+    forSearchType?: SearchType;
+    forTags?: number[];
+    forBirthdayDay?: number;
+    forBirthdayMonth?: number;
+    forBirthdayYear?: number;
+    forAnniversaryDay?: number;
+    forAnniversaryMonth?: number;
+    forAnniversaryYear?: number;
+    includeArchived?: boolean;
+    includeInactiveUsers?: boolean;
+    includeComments?: boolean;
+    includePageTypes?: PageType[];
+    includeContentIds?: number[];
+    sortType?: SortType;
+    sortDirection?: SortDirection;
+    pageSize?: number;
+    pageNumber?: number;
+    scope?: number;
+}

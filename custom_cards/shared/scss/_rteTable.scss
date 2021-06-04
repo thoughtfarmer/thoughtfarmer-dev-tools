@@ -1,0 +1,33 @@
+.tfc-rte-table {
+    display: block;
+    max-width: 100%;
+    overflow: auto;
+    margin: 24px 0;    
+
+    table {
+        width: 100%;       
+
+        th {
+            border-bottom: 1px solid black;
+            background-color: transparent;
+        }
+
+        th,
+        td {
+            vertical-align: top;
+            word-break: normal;
+            padding: 1em;
+            white-space: initial;
+            overflow-wrap: break-word;
+        }
+
+        td {
+            padding: 1em;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f5f8fa;
+        }
+
+    }
+}

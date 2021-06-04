@@ -1,0 +1,20 @@
+
+@import '../shared/scss/informationalBanners';
+
+.tfc-rte-container-fullwidth {
+    padding: none;
+}
+
+.tfc-rte-heading {
+    .tf-portlet-heading, .tf-portlet-icon {
+        display: inline-block;
+    }
+}
+
+.tfc-side-column-rte-body img {
+    max-width: 100%;
+}
+
+.tfc-hide-bottom-border + .tf-portlet:before {
+    display: none;
+}

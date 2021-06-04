@@ -1,0 +1,11 @@
+export * from './ApiFilesApi';
+import { ApiFilesApi } from './ApiFilesApi';
+export * from './ApiFormApi';
+import { ApiFormApi } from './ApiFormApi';
+export * from './ApiFormEntryApi';
+import { ApiFormEntryApi } from './ApiFormEntryApi';
+export * from './ApiSearchApi';
+import { ApiSearchApi } from './ApiSearchApi';
+export * from './ApiUserApi';
+import { ApiUserApi } from './ApiUserApi';
+export declare const APIS: (typeof ApiFilesApi | typeof ApiFormApi | typeof ApiFormEntryApi | typeof ApiSearchApi | typeof ApiUserApi)[];

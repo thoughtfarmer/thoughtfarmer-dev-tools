@@ -1,0 +1,7 @@
+declare let tf: any;
+<<<<<<< HEAD
+declare let ctx: any;
+
+=======
+declare let ctx: any;
+>>>>>>> dd80ff6a635e3ec604ac999f163bedcf37bdf59e

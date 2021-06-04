@@ -1,0 +1,22 @@
+@import '../../shared/scss/clearfix';
+
+.tfc-step-container {
+    background-color: #f1f2f3;
+    padding: 2em;
+    border-radius: 15px;
+
+    .tfc-step-controls {
+        margin-top: 1.5em;
+
+        .tfc-left-button {
+            float: left;
+        }
+
+        .tfc-right-button {
+            float: right;
+        }
+
+        @include clearfix;
+    }
+
+}

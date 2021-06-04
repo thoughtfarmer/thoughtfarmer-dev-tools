@@ -1,0 +1,29 @@
+@mixin min450 {
+    @media screen and (min-width: 450px) {
+        @content;
+    }
+}
+
+@mixin min500 {
+    @media screen and (min-width: 500px) {
+        @content;
+    }
+}
+
+@mixin min768 {
+    @media screen and (min-width: 768px) {
+        @content;
+    }
+}
+
+@mixin min1024 {
+    @media screen and (min-width: 1024px) {
+        @content;
+    }
+}
+
+@mixin min1440 {
+    @media screen and (min-width: 1440px) {
+        @content;
+    }
+}
