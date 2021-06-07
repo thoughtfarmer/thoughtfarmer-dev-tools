@@ -1,11 +1,11 @@
 /* eslint-disable no-console */
-export const sendApiTest = (name, apiCall: Promise<any>) => {
+export const sendApiTest = (apiCall: Promise<any>, name?: string) => {
 
     apiCall.then((response) => {
-        console.log(`Success - ${response.statusCode} ${response.success} - ${name}`,
+        console.log(`Success - ${response.statusCode} ${response.success} - ${name || ''}`,
             response.data);
     }).catch((error) => {
-        console.warn(`Error - ${name}`,
+        console.warn(`Error - ${name || ''}`,
             error);
     });
     

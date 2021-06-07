@@ -80,7 +80,7 @@ export default class UsersApi {
         });
     }
 
-    public getRandomUser(extraFields: string[], ignoreErrors?: boolean): Promise<IApiResponse<IUser>> {
+    public getRandomUser(extraFields?: string[], ignoreErrors?: boolean): Promise<IApiResponse<IUser>> {
         const queryString = buildQueryString({extraFields});
 
         return this.apiHelper.newApiRequest<IUser>({

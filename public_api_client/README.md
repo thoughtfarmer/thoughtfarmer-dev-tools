@@ -4,27 +4,25 @@ This package is a partial implementation for a TypeScript API client for accessi
 
 ## Developer Instructions
 
-This package includes `lite-server` so that you can test the API calls right from the browser. Then subsequent changes just require a `gulp build` and the file watch will automatically trigger a reload. This will require that the ThoughtFarmer instance you are testing with has CORS enabled for this local server.
+This package includes `lite-server` so that you can test the API calls right from the browser. Then subsequent changes just require a `gulp build` and the file watch will automatically trigger a reload. This will require that the ThoughtFarmer instance you are testing with has CORS enabled for this local server. 
 
-**Optionally**: If you are developing custom cards you can simply test the API Client directly in code using breakpoints in the sourcemaps after deploying your card to ThoughtFarmer. No need for additional configuration or testing described in the following instructions.
+**Recommended**: If you are developing custom cards you can simply test the API Client directly in code using breakpoints in the sourcemaps after deploying your card to ThoughtFarmer. No need for additional configuration or testing described in the following instructions.
 
 To set this up you must do the following:
 
- 1. Open SQL MS and run the following against your local dev instance
+ 1. On-premise clients can Open SQL MS and run the following against your local dev instance
     - `update ConfigSetting Set Value = 'http://localhost:8000' where Name = 'api.cors.allowed.origins'`
     - recycle the app pool
- 2. Open up Visual Studio Code to the new folder `ApiTools/ApiClient`
- 3. Crack open the shell and run `yarn install`
- 4. In VS Code click on the Debug tool and select the gear icon _Open launch.json_
- 5. Paste the contents of `/vstools/launch.json` into there completely
- 6. Hit CTRL + SHIFT + B to bring up the build tasks
- 7. Click the little gear icon to _Configure tasks_. This should open the hidden `.vscode/tasks.json` file
- 8. Paste the contents of `/vstools/tasks.json` into there completely
- 9. Update `/test/index.ts`. On hte line that news up the `apiClient` use the URL, and APIToken for your own test site
- 10. Hit F5. If all is working it should build the test app, open Chrome to http://localhost:8000
- 11. The test scripts from `index.ts` should be running and results in the console window
- 12. In the debug console run `sendApiTest(apiClient.users.GetCurrentUser())`
- 13. Verify you see the request and response in the console window
+ 2. Cloud clients can contact ThoughtFarmer support to assist in configuring CORS.
+ 3. Open up Visual Studio Code and open the folder `/public_api_client/`
+    - It is recommended to open this project separately so all the debugging and tasj integrations with Visual Studio Code will work.
+    - If you want to work on them side by side in the same instance of Visual Studio code then you can do so, but must build and launch manually from the command line.
+ 4. Crack open the integrated terminal and run `yarn install` 
+ 5. Update `./public_api_client/test/index.ts`. On the line that news up the `apiClient` use the URL, and APIToken for your own test site
+ 6. Hit F5. If all is working it should build the test app, open Chrome to http://localhost:8000
+ 7. The test scripts from `index.ts` should be running and results in the console window
+ 8. In the debug console run `sendApiTest(apiClient.users.GetCurrentUser())`
+ 9. Verify you see the request and response in the console window
 
 ## Developer tips
 
@@ -56,8 +54,9 @@ However, that gets pretty repetitive and cumbersome. There are 2 helper methods 
 
 ```typescript
 // Takes a promise and outputs the response to the console.
+// Optional name for logging. Helpful when you are making many calls and want to differentiate them in the console.
 // Shows rejections as warnings and logs either success or fail.
-sendApiTest(apiCall: Promise<any>)
+sendApiTest(apiCall: Promise<any>, name?: string)
 
 // Example usage:
 

@@ -1,7 +1,7 @@
 (function(){
 
-    let testIds = [9999999];
-    let testPromises = testIds.map( (userId) => apiClient.users.GetUser(userId, ['Floor', 'Role'] , true));
+    let testIds = [1,2,3];
+    let testPromises = testIds.map( (userId) => apiClient.users.GetUser(userId, null , true));
 
     sendMultipleApiTest(testPromises);
 

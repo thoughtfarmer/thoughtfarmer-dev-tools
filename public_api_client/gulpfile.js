@@ -27,7 +27,8 @@ const babelConfig = {
     inputSourceMap: true,
     exclude: 'node_modules/**',
     plugins: [   
-        ['@babel/plugin-proposal-class-properties', { 'loose': true }]        
+        ['@babel/plugin-proposal-class-properties', { 'loose': true }],
+        ['@babel/plugin-proposal-private-methods', { 'loose': true }]        
     ],
     externalHelpers: true,
     babelrc: false
