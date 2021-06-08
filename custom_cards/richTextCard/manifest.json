@@ -1,6 +1,6 @@
 {
-    "name": "Security aware Rich Text",
-    "description": "Pulls in RTE body content from a single page. Nothing will show to users without view permission.",
+    "name": "Rich text from page",
+    "description": "Takes a content ID as configuration and pulls in that content into the Custom card. Security permissions will be in effect. ",
     "url": "",
     "isActive": true,
     "customCardTemplateType": 0,
@@ -11,7 +11,7 @@
         "sourceId": 0,
         "showTitle": false,
         "alternateTitle": null,
-        "icon": "",
+        "icon": null,
         "useSummary": true,
         "hideBottomBorder": false
     }

@@ -20,3 +20,16 @@ For details and configuration instructions please see the [Custom Card Tools Rea
 This package is a partial implementation for a TypeScript client for interacting with the ThoughtFarmer API. It is easily extensible to support new methods as they are needed. The most common methods and models are already available.
 
 For details see the [Public API Client Readme](/public_api_client/README.md).
+
+## Installation and requirements
+
+Both packagages require the following to be setup first.
+
+1) Install Node version 14 or higher. https://nodejs.org/en/download/
+2) Install gulp-cli globally.
+   - `npm install -g gulp-cli`
+3) Ensure that your npm global bin folder is added to your systems PATH environment variable. Check the path by running:
+   - `npm config get prefix`
+   - Verify gulp is available by running `gulp --version`.
+4) Install yarn package manager.
+   - `npm install -g yarn`

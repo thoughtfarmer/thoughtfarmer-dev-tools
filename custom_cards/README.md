@@ -35,15 +35,22 @@ The root of the custom_cards package contains a `config.json` file that looks li
 }
 ```
 
-The `sites` property let's you manage all of the ThoughtFarmer sites you wish to deploy to. The `default` site is a special name that will be used for the main site you are working with. It will be used for all commands when no site parameter is specified. See the [site parameter](#site-parameter) section for details.
+The `sites` property let's you manage all of the ThoughtFarmer sites you wish to deploy to. The `default` site is a special name that will be used for the main site you are working with. It will be used for all commands when no site parameter is specified. See the [site parameter](#site-parameter) section for details. Add as many sites as you need.
 
+## Getting started
+
+To get started quickly you can use the demo card Rich Text card. 
 
 
 ## Build commands
 
+
+
 ### Site parameter
 
 Any command that interacts with a site (e.g. deploy, auth-test, dev-deploy) all require a `-site` parameter. If none is specified it will default to the `default` site from the `config.json`.
+
+You can have as many sites as you require. Just update the root level `config.json` to add more sites. Additionally, every custom card has a child `config.json` that will need to store the corresponding Custom Card Ids for the sites. 
 
 There is an alternative shortcut to simply call the name of the name of the site as a flag. This will run the command against that site if it is found in the `config.json`.
 

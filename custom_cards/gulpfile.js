@@ -26,7 +26,6 @@ const inquirer = require('inquirer');
 const eslint = require('gulp-eslint');
 const tfSassReplace = require('./tf-sass-variable-replace.js');
 
-
 // Replace node variables in included node_module plugins (if any)
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const DRAGGABLE_DEBUG = process.env.DRAGGABLE_DEBUG || 'production';
@@ -196,7 +195,7 @@ function hasMissingParameters(checkSite, checkFolder, checkCard) {
     if (checkFolder && !folderName) {
         log.warn('No custom card folder name found. Use ' + '--folderName'.yellow + ' myCardFolder'.magenta + ' , or run the command from the card folder.');
         missingParameters = true;
-    }    
+    } 
 
     return missingParameters;
 }
@@ -214,7 +213,7 @@ gulp.task('eslint', () => {
 });
 
 gulp.task('sass', async () => {
-    if (hasMissingParameters(false, true, false, false)) {
+    if (hasMissingParameters(false, true, false)) {
         return Promise.reject('Parameter validation failed');
     }
 
@@ -234,7 +233,7 @@ gulp.task('sass', async () => {
 });
 
 gulp.task('build', async () => {
-    if (hasMissingParameters(false, true, false, true)) {
+    if (hasMissingParameters(false, true, false)) {
         return Promise.reject('Parameter validation failed');
     }
     log('Building custom card ' + folderName.magenta);
@@ -311,7 +310,7 @@ function getFileOrEmpty(fileName, encoding = 'utf8') {
 }
 
 gulp.task('push', async () => {
-    if (hasMissingParameters(true, true, true, false)) {
+    if (hasMissingParameters(true, true, true)) {
         return Promise.reject('Parameter validation failed');
     }
 
@@ -344,8 +343,65 @@ gulp.task('push', async () => {
     }
 });
 
+gulp.task('create', async () => {
+    if (hasMissingParameters(true, true, true)) {
+        return Promise.reject('Parameter validation failed');
+    }
+
+    const manifest = getConfigOrNull(`./${folderName}/manifest.json`);
+    if (!manifest) {
+        return Promise.reject('Card is missing a manifest.json. Unable to create card on remote ThoughtFarmer.');
+    }
+
+    log('Creating custom card code to site url ' + site.baseUrl.magenta + ' ...');
+
+    const styleFileType = process.argv[3] === '--no-sass-compile' ? 'scss' : 'css';
+
+    const body = Object.assign({            
+        clientTemplate: getFileOrEmpty(`./${folderName}/dist/${folderName}.js`),
+        styleTemplate: getFileOrEmpty(`./${folderName}/dist/${folderName}.${styleFileType}`) + '\n' + getFileOrEmpty(`./${folderName}/dist/bundle.css`),
+        htmlTemplate: getFileOrEmpty(`./${folderName}/${folderName}.html`)
+    }, manifest);
+
+    body.defaultConfiguration = JSON.stringify(manifest.defaultConfiguration, null, 4);
+
+    const response = await fetch(`${site.baseUrl}/api/customportlets/`, {
+        method: 'post',
+        body: JSON.stringify(body),
+        headers: {
+            'Authorization': site.restToken,
+            'Content-Type': 'application/json'
+        }
+    });
+
+    if (response.status === 200) {
+        log('Response: ' + response.status.toString().yellow + ' ' + response.statusText.green);
+        const newCustomPortlet = await response.json();
+
+        let config = getConfigOrNull(`./${folderName}/config.json`);
+
+        if (!config) {
+            config = {
+                sites: {
+                    [arg.site]: {
+                        id: newCustomPortlet.portletTemplateId
+                    }
+                }
+            };    
+        } else {
+            config.sites[arg.site] = { id: newCustomPortlet.portletTemplateId};
+        } 
+
+        fs.writeFileSync(`./${folderName}/config.json`, JSON.stringify(config, null, 4));
+
+    } else {
+        log.error('Response: ' + response.status.toString().red + ' ' + response.statusText.magenta);
+        throw new Error('Failed to push card');
+    }
+});
+
 gulp.task('upgrade', async () => {
-    if (hasMissingParameters(true, true, true, false)) {
+    if (hasMissingParameters(true, true, true)) {
         return Promise.reject('Parameter validation failed');
     }
 
@@ -443,8 +499,8 @@ gulp.task('newcard', async (done) => {
 
 });
 
-gulp.task('manifest:create', async (done) => {
-    if (hasMissingParameters(false, true, false, false)) {
+gulp.task('manifest', async (done) => {
+    if (hasMissingParameters(false, true, false)) {
         return Promise.reject('Parameter validation failed');
     }
 
@@ -524,7 +580,7 @@ gulp.task('manifest:create', async (done) => {
 
 gulp.task('config', async (done) => {
 
-    if (hasMissingParameters(false, true, false, false)) {
+    if (hasMissingParameters(false, true, false)) {
         return Promise.reject('Parameter validation failed');
     }
 

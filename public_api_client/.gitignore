@@ -6,4 +6,12 @@ package-lock.json
 yarn.lock
 .rpt2_cache
 bin
-.yarn
+
+
+.yarn/*
+!.yarn/cache
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
