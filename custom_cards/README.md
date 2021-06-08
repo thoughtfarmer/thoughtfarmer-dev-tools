@@ -61,7 +61,7 @@ From the browser developer tools you can then find them by going to the Sources 
 
 You will then be able to add breakpoints and debug your code across all your original component files.
 
-![alt text](./shared/img/sourcemaps.png "Sourcemaps for debugging")
+![alt text](/shared/img/sourcemaps.png "Sourcemaps for debugging")
 
 ## Linting
 
@@ -124,4 +124,8 @@ For example,
 
 ### gulp config
 
-This command will create or overwrite the `config.json` file for a specific card. It is mostly used to set up an existing card that has not yet been synced with a remote ThoughtFarmer. For a new card, use the command `gulp newcard`. 
+This command will create or overwrite the `config.json` file for a specific card. It is mostly used to set up an existing card that has not yet been synced with a remote ThoughtFarmer. For a new card, use the command `gulp newcard`.
+
+### gulp newcard
+
+This command must be run from the root `custom_cards` folder. It will initiate a series of prompts that will set
