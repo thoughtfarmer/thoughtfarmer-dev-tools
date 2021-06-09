@@ -1,0 +1,11 @@
+{
+    "name": "test",
+    "description": "",
+    "url": "",
+    "isActive": true,
+    "customCardTemplateType": 1,
+    "isAdminOnly": false,
+    "canOverrideConfig": true,
+    "isTransformDisabled": true,
+    "defaultConfiguration": {}
+}

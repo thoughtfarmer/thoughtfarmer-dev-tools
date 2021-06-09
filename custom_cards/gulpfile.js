@@ -326,7 +326,6 @@ gulp.task('push', async () => {
             styleTemplate: getFileOrEmpty(`./${folderName}/dist/${folderName}.${styleFileType}`) + '\n' + getFileOrEmpty(`./${folderName}/dist/bundle.css`),
             htmlTemplate: getFileOrEmpty(`./${folderName}/${folderName}.html`),
             isCurrent: true,
-            //customCardTemplateType: ,
             isTransformDisabled: bypassServerTransform
         }),
         headers: {
@@ -458,13 +457,17 @@ gulp.task('newcard', async (done) => {
         {
             type: 'expand',
             name: 'cardType',
-            message: 'Using .tsx or .jsx?',
+            message: 'Using .tsx or .jsx components? Or HTML and JavaScript?',
             choices: [{
                 key: 't',
                 value: 'tsx'
             }, {
                 key: 'j',
                 value: 'jsx'
+            },
+            {
+                key: 'h',
+                value: 'html'
             }]
         },
         {
@@ -492,6 +495,9 @@ gulp.task('newcard', async (done) => {
     fs.mkdirSync(`./${answer.cardName}`);
     fs.mkdirSync(`./${answer.cardName}/components`);
     fs.writeFileSync(`./${answer.cardName}/${answer.cardName}.${answer.cardType}`, '');
+    if (answer.cardType === 'html') {
+        fs.writeFileSync(`./${answer.cardName}/${answer.cardName}.js`, '');
+    }
     fs.writeFileSync(`./${answer.cardName}/${answer.cardName}.scss`, '');
     fs.writeFileSync(`./${answer.cardName}/config.json`, configContents);
     done();
