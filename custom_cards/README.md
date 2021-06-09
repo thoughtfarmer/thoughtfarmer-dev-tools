@@ -4,6 +4,28 @@ These tools allow you to build and deploy custom cards right from your preferred
 
 For details on the code involved in creating cards please see our documentation about using the [Custom card API](https://helpdesk.thoughtfarmer.com/hc/en-us/articles/1500000981081-Custom-card-API) and [Communicating between custom cards with events](https://helpdesk.thoughtfarmer.com/hc/en-us/articles/1500000981161-Communicating-between-custom-cards-with-events).
 
+
+- [Custom card development tools](#custom-card-development-tools)
+  - [Installation](#installation)
+  - [Configuration](#configuration)
+  - [Getting started](#getting-started)
+  - [Sourcemaps](#sourcemaps)
+  - [Linting](#linting)
+  - [Build commands](#build-commands)
+    - [Site parameter](#site-parameter)
+    - [Card configuration](#card-configuration)
+    - [`gulp config`](#gulp-config)
+    - [`gulp newcard`](#gulp-newcard)
+    - [`gulp manifest`](#gulp-manifest)
+    - [`gulp build`](#gulp-build)
+    - [`gulp sass`](#gulp-sass)
+    - [`gulp clean`](#gulp-clean)
+    - [`gulp push`](#gulp-push)
+    - [`gulp upgrade`](#gulp-upgrade)
+    - [`gulp eslint`](#gulp-eslint)
+    - [`gulp deploy`](#gulp-deploy)
+    - [`gulp dev-deploy`](#gulp-dev-deploy)
+
 ## Installation
 
 1) Install Node version 14 or higher. https://nodejs.org/en/download/
