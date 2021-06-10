@@ -4,6 +4,8 @@ These tools allow you to build and deploy custom cards right from your preferred
 
 For details on the code involved in creating cards please see our documentation about using the [Custom card API](https://helpdesk.thoughtfarmer.com/hc/en-us/articles/1500000981081-Custom-card-API) and [Communicating between custom cards with events](https://helpdesk.thoughtfarmer.com/hc/en-us/articles/1500000981161-Communicating-between-custom-cards-with-events).
 
+Additionally, see the [Custom Card helpers and utilities](./shared/README.md) documentation for details the FormFlow API and other concepts.
+
 
 - [Custom card development tools](#custom-card-development-tools)
   - [Installation](#installation)
