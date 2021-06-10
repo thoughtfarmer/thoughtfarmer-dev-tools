@@ -19,6 +19,8 @@ For details on the code involved in creating cards please see our documentation 
     - [`gulp manifest`](#gulp-manifest)
     - [`gulp build`](#gulp-build)
     - [`gulp sass`](#gulp-sass)
+    - [`gulp compile`](#gulp-compile)
+    - [`gulp create`](#gulp-create)
     - [`gulp clean`](#gulp-clean)
     - [`gulp push`](#gulp-push)
     - [`gulp upgrade`](#gulp-upgrade)
@@ -113,9 +115,9 @@ All the build commands rely on gulp. There are various commands to build, config
 
 Any command that interacts with a site (`push`, `upgrade`, `deploy`, `auth-test`, `dev-deploy`) all require a `-site` parameter. If none is specified it will default to the `default` site from the `config.json`.
 
-You can have as many sites as you require. Just update the root level `config.json` to add more sites. Additionally, every custom card has a child `config.json` that will need to store the corresponding Custom Card Ids for the sites. 
+You can have as many sites as you require. Just update the root level `config.json` to add more sites. Additionally, every custom card has a child `config.json` that will need to store the corresponding Custom Card Ids for the sites.
 
-There is an alternative shortcut to simply call the name of the name of the site as a flag. This will run the command against that site if it is found in the `config.json`.
+There is an alternative shortcut to simply call the name of the site as a flag. This will run the command against that site if it is found in the `config.json`.
 
 Examples:
 
@@ -131,7 +133,7 @@ gulp deploy -prod #shortcut syntax to deploy to the site labelled prod
 
 Each custom card must also have a `config.json` file in its folder in order to be deployed to a remote site. For each site you wish to deploy to it must have an entry in the sites parameter along with the id.
 
-The id comes from the ThoughtFarmer Admin Panel --> Cards page. Each custom card has an id visible in the first column from that admin page. 
+The id comes from the ThoughtFarmer Admin Panel --> Cards page. Each custom card has an id visible in the first column from that admin page.
 
 You can either create a new card from the admin interface, and update the `config.json` manually. Or you can use the `gulp create` command.
 
@@ -164,7 +166,7 @@ gulp config -prod    # will update the config for the site labelled prod
 
 ### `gulp newcard`
 
-This command must be run from the root `custom_cards` folder. It will initiate a series of prompts that will setup a new card from scratch for you. 
+This command must be run from the root `custom_cards` folder. It will initiate a series of prompts that will setup a new card from scratch for you.
 
 The prompts are:
 
@@ -222,7 +224,6 @@ If `sourceMaps` is set to true in your root `./config.json` then this task will 
 
 **Tip**: This command is part of `gulp deploy` and `gulp dev-deploy` which does a number of tasks.
 
-
 ### `gulp sass`
 
 This is the main command that will rollup and transpile all scss into a single CSS file ready for deployment to ThoughtFarmer. The result will be in the `./dist` folder for the custom card you run it for.
@@ -230,6 +231,14 @@ This is the main command that will rollup and transpile all scss into a single C
 You must run this command from the specific card folder you wish to target.
 
 **Tip**: This command is part of `gulp deploy` and `gulp dev-deploy` which does a number of tasks.
+
+### `gulp compile`
+
+This is a shortcut task that simply runs both the `build` and `sass` tasks at once. Useful to run the first time before running `gulp create`.
+
+### `gulp create`
+
+This task will take the compiled code from the `./dist` folder and create a new custom card on the designated remote ThoughtFarmer using the [site parameter](#site-parameter). This is helpful to avoid having to create a stub card via the ThoughtFarmer admin panel first. It will use the `manifest.json` file for the card during the creation process. Be sure to have a default configuration object in the `manifest.json` if required. See [gulp manifest](#gulp-manifest) for details.
 
 ### `gulp clean`
 

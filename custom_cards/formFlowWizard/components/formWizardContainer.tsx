@@ -51,8 +51,12 @@ interface IState {
 
 export default class FormWizardContainer extends React.Component<IProps, IState> {
 
+    // The portletConfigurationId ensures the action name is unique for every instance of the custom card.
+    // Otherwise, multiple instances of the same card will fire each other's event listeners with potentially the wrong data.
     private _loadFormAction = `tfcLoadFormAction_${portletConfigurationId}`;
     private _loadCreateAction = `tfcCreateEntryAction_${portletConfigurationId}`;
+
+    // Each resource in the FormFlow API can be newed up as its own client.
     private _formApiClient = new tfcFormFlowApi.ApiFormApi();
     private _formEntryApiClient = new tfcFormFlowApi.ApiFormEntryApi();
 
@@ -74,17 +78,24 @@ export default class FormWizardContainer extends React.Component<IProps, IState>
     }
 
     componentDidMount() {
+        // Register event listeners with unique action names and callbacks
         ctx.customPortlets.addEventListener(this._loadFormAction, this.formLoaded);
         ctx.customPortlets.addEventListener(this._loadCreateAction, this.formEntryCreated);
+
+        // Create the load form promise. All available functions should be available with intelli-sense and include documentation.
         const loadForm = this._formApiClient.publicFormFormIdGet(this.props.formId);
+
+        // Fire off the Promise and associate its completion with an action name
         firePromise(ctx, this._loadFormAction, loadForm);       
     }
 
     componentWillUnmount() {
+        // Remove event listeners when component unmounts to avoid memory leaks
         ctx.customPortlets.removeEventListener(this._loadFormAction, this.formLoaded);
         ctx.customPortlets.removeEventListener(this._loadCreateAction, this.formEntryCreated);
     }
 
+    // The callback fired when an action is complete. It MUST have this exact signature.
     formEntryCreated = (success: boolean, data: any) => {
         if (!success) {
 
@@ -128,7 +139,6 @@ export default class FormWizardContainer extends React.Component<IProps, IState>
         });
 
     }
-
 
     formLoaded = (success: boolean, data: any) => {
         if (!success) {
@@ -182,7 +192,6 @@ export default class FormWizardContainer extends React.Component<IProps, IState>
         if (this.state.loadError) {
             body = <WarningMessage reversed containsHtml message={this.state.errorMessage} />;
         } else if (this.state.formCreateSuccess) {
-            // TODO: Need default messaging from i18n somehow
             body = <div className="tfc-information">
                 {tf.localizedListGetAnyCulture(ctx, this.state.form.thankyouMessage) || 'Thank you for submitting your entry'}
             </div>;

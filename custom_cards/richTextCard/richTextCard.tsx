@@ -1,12 +1,12 @@
-import { parseConfig } from '../shared/utilities';
+import { IConfigurtationItem, parseConfig } from '../shared/utilities';
 import RTEContentContainer from './components/rteContentContainer';
 
-const params = [
+const params: IConfigurtationItem[] = [
     { key: 'sourceId', type: 'int', defaultValue: 0 },
     { key: 'showTitle', type: 'boolean', defaultValue: false },
     { key: 'alternateTitle', type: 'string', defaultValue: null },
     { key: 'icon', type: 'string', defaultValue: null },
-    { key: 'useSummary', type: 'bool', defaultValue: true },
+    { key: 'useSummary', type: 'boolean', defaultValue: true },
     { key: 'hideBottomBorder', type: 'bool', defaultValue: false }
 ];
 

@@ -1,0 +1,13 @@
+{
+    "name": "FormFlow Wizard",
+    "description": "Will turn all sections of a Form into a wizard style navigation with pages. NOTE: Only a Proof of Concept. Not all field types are implemented.",
+    "url": "",
+    "isActive": true,
+    "customCardTemplateType": 0,
+    "isAdminOnly": false,
+    "canOverrideConfig": true,
+    "isTransformDisabled": true,
+    "defaultConfiguration": {
+        "formId": 0
+    }
+}
