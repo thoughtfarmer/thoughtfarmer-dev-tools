@@ -25,7 +25,7 @@ For details see the [Public API Client Readme](/public_api_client/README.md).
 
 For details on the code involved in creating cards please see our documentation about using the [Custom card API](https://helpdesk.thoughtfarmer.com/hc/en-us/articles/1500000981081-Custom-card-API) and [Communicating between custom cards with events](https://helpdesk.thoughtfarmer.com/hc/en-us/articles/1500000981161-Communicating-between-custom-cards-with-events).
 
-Additionally, see the [Custom Card helpers and utilities](./shared/README.md) documentation for details the FormFlow API and other concepts once you are up and running and ready to build custom cards.
+Additionally, see the [Custom Card helpers and utilities](./custom_cards/shared/README.md) documentation for details the FormFlow API and other concepts once you are up and running and ready to build custom cards.
 
 ## Installation and requirements
 
