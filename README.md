@@ -29,7 +29,7 @@ Additionally, see the [Custom Card helpers and utilities](./custom_cards/shared/
 
 ## Installation and requirements
 
-Both packagages require the following to be setup first.
+Both packages require the following to be setup first.
 
 1) Install Node version 14 or higher. https://nodejs.org/en/download/
 2) Install gulp-cli globally.

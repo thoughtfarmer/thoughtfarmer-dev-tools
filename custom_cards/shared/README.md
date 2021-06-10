@@ -26,7 +26,7 @@ export default class RTEContentContainer extends React.Component<IProps, IState>
 
     // Action name is unique per instance of the custom card. 
     // The special global portletConfigurationId ensures that.
-    // Otherwise multiple instances of the same card on a page may send data to eachother's listeners. 
+    // Otherwise multiple instances of the same card on a page may send data to each other's listeners. 
     // Only make this generic if you want communication between cards.
     private _actionName = `tfcRTEContainerPageLoaded_${portletConfigurationId}`;   
     private _apiClient: ApiClient = new ApiClient();
