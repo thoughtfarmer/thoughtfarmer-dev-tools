@@ -457,7 +457,7 @@ gulp.task('newcard', async (done) => {
         {
             type: 'expand',
             name: 'cardType',
-            message: 'Using .tsx or .jsx components? Or HTML and JavaScript?',
+            message: 'Using .tsx (t) or .jsx (j) components? Or a webpage (w) with HTML and JavaScript?',
             choices: [{
                 key: 't',
                 value: 'tsx'
@@ -466,7 +466,7 @@ gulp.task('newcard', async (done) => {
                 value: 'jsx'
             },
             {
-                key: 'h',
+                key: 'w',
                 value: 'html'
             }]
         },
