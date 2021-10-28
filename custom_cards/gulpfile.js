@@ -80,12 +80,8 @@ const arg = (argList => {
 
 })(process.argv);
 
-// parse the folder name
-const foldersInPath = process.env.INIT_CWD.split('\\');
-let folderName = foldersInPath[foldersInPath.indexOf('custom_cards') + 1];
-if (arg.folderName) {
-    folderName = arg.folderName;
-}
+// Globals
+let cardConfig, entryFile, folderName;
 
 function getConfigOrNull(configFilePath) {
     if (!fs.existsSync(configFilePath)) {
@@ -95,12 +91,21 @@ function getConfigOrNull(configFilePath) {
     return JSON.parse(rawData);
 }
 
-const cardConfig = getConfigOrNull(`./${folderName}/config.json`);
-let entryFile = !fs.existsSync(`./${folderName}/${folderName}.tsx`) ? `./${folderName}/${folderName}.jsx` : `./${folderName}/${folderName}.tsx`;
-if (!fs.existsSync(entryFile)) {
-    entryFile = `./${folderName}/${folderName}.js`;
+function initializeParams(useOriginalDirectory) {
+    // parse the folder name
+    const foldersInPath = useOriginalDirectory ? process.env.INIT_CWD.split('\\') : process.cwd().split('\\');
+    folderName = foldersInPath[foldersInPath.indexOf('custom_cards') + 1];
+    if (arg.folderName) {
+        folderName = arg.folderName;
+    }
+    cardConfig = getConfigOrNull(`./${folderName}/config.json`);
+    entryFile = !fs.existsSync(`./${folderName}/${folderName}.tsx`) ? `./${folderName}/${folderName}.jsx` : `./${folderName}/${folderName}.tsx`;
+    if (!fs.existsSync(entryFile)) {
+        entryFile = `./${folderName}/${folderName}.js`;
+    }
 }
 
+initializeParams(true);
 const site = buildConfig.sites[arg.site];
 const customPortletId = !site || !cardConfig || typeof (cardConfig.sites[arg.site]) === 'undefined' ? undefined : cardConfig.sites[arg.site].id;
 const bypassServerTransform = cardConfig && typeof (cardConfig.bypassServerTransform) !== 'undefined' ? cardConfig.bypassServerTransform : true;
@@ -298,7 +303,7 @@ function getFileOrEmpty(fileName, encoding = 'utf8') {
     try {
         let fileData = fs.readFileSync(fileName, { encoding });
 
-        // If there are no imports in js files, then the bundle.css will simply say undefined. Must return emtpy instead.
+        // If there are no imports in js files, then the bundle.css will simply say undefined. Must return empty instead.
         if (fileName.indexOf('bundle.css') > -1 && fileData.indexOf('undefined') === 0) {
             fileData = '';
         }
@@ -421,7 +426,6 @@ gulp.task('upgrade', async () => {
     }
 });
 
-
 // Gulp-file seems to signal it is complete before the operation has actually flushed to disk.
 // This is a workaround.
 gulp.task('wait', () => {
@@ -433,14 +437,14 @@ gulp.task('wait', () => {
         return new Promise((resolve) => {
             setTimeout(() => {
                 resolve();
-            }, 200);
+            }, 500);
         });
     } else {
         return Promise.resolve();
     }
 });
 
-gulp.task('newcard', async (done) => {
+gulp.task('scaffold', async (done) => {
     const answer = await inquirer
         .prompt([{
             type: 'input',
@@ -500,9 +504,10 @@ gulp.task('newcard', async (done) => {
     }
     fs.writeFileSync(`./${answer.cardName}/${answer.cardName}.scss`, '');
     fs.writeFileSync(`./${answer.cardName}/config.json`, configContents);
-    done();
+    process.chdir(`./${answer.cardName}`);
+    initializeParams();    
     log(`Successfully created new card ${answer.cardName} with custom portlet id ${answer.customPortletId}.`);
-
+    done();
 });
 
 gulp.task('manifest', async (done) => {
@@ -577,11 +582,10 @@ gulp.task('manifest', async (done) => {
     delete answer.hasConfig;
     
     
-    fs.writeFileSync(`./${folderName}/manifest.json`, JSON.stringify(answer, null, 4));
+    fs.writeFileSync(path.join(process.cwd(), 'manifest.json'), JSON.stringify(answer, null, 4));
     done();
     log('Finished creating manifest.json file with data');
     log(answer);
-
 });
 
 gulp.task('config', async (done) => {
@@ -616,7 +620,6 @@ gulp.task('config', async (done) => {
     done();
     log(`Successfully created config file for ${folderName} with custom portlet id ${answer.customPortletId}.`);
     log(configContents);
-
 });
 
 gulp.task('deploy', gulp.series('clean', 'eslint', 'build', 'sass', 'wait', 'push', 'upgrade'));
@@ -624,3 +627,7 @@ gulp.task('deploy', gulp.series('clean', 'eslint', 'build', 'sass', 'wait', 'pus
 gulp.task('dev-deploy', gulp.series('clean', 'build', 'sass', 'wait', 'push', 'upgrade'));
 
 gulp.task('compile', gulp.parallel('build', 'sass'));
+
+gulp.task('newcard', gulp.series('scaffold', 'manifest'));
+
+gulp.task('install', gulp.series('compile', 'create'));

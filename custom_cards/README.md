@@ -21,6 +21,7 @@ Additionally, see the [Custom Card helpers and utilities](./shared/README.md) do
     - [`gulp manifest`](#gulp-manifest)
     - [`gulp build`](#gulp-build)
     - [`gulp sass`](#gulp-sass)
+    - [`gulp install`](#gulp-install)
     - [`gulp compile`](#gulp-compile)
     - [`gulp create`](#gulp-create)
     - [`gulp clean`](#gulp-clean)
@@ -178,9 +179,11 @@ The prompts are:
 
 This will create the folder based on your first response, and create two entry files. The build tools depend on the entry files being the same name as the folder, so _do not_ change them. You can add as many additional files and components as you need and simply use `import` syntax to create whatever you need. A sub folder called `components` will automatically be created for you for this purpose.
 
+The following command `gulp manifest` is run as part of `newcard` as all cards should have a manifest for ease of deployment.
+
 ### `gulp manifest`
 
-The manifest file is required _before_ you run `gulp create`. It uses the information in this file to fill in all the meta-data required when you create a new custom card. The task will give the following prompts:
+The manifest file is required _before_ you run `gulp create`. It uses the information in this file to fill in all the meta-data required when you create a new custom card. If you used `gulp newcard` to create the card then this should already have run. The task will give the following prompts:
 
 - **Name**: Name of the card as it will appear in ThoughtFarmer
 - **Description** (optional): Quick summary about the card.
@@ -234,9 +237,13 @@ You must run this command from the specific card folder you wish to target.
 
 **Tip**: This command is part of `gulp deploy` and `gulp dev-deploy` which does a number of tasks.
 
+### `gulp install` 
+
+This is a shortcut task that simply runs both `compile` and `create` tasks. It is the best way to quickly take new card code and deploy it as a new custom card on your ThoughtFarmer instance.
+
 ### `gulp compile`
 
-This is a shortcut task that simply runs both the `build` and `sass` tasks at once. Useful to run the first time before running `gulp create`.
+This is a shortcut task that simply runs both the `build` and `sass` tasks at once. Useful to run the first time before running `gulp create` if you have not already run `gulp install`. 
 
 ### `gulp create`
 
