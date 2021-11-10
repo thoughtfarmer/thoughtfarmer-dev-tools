@@ -582,7 +582,8 @@ gulp.task('manifest', async (done) => {
     delete answer.hasConfig;
     
     
-    fs.writeFileSync(path.join(process.cwd(), 'manifest.json'), JSON.stringify(answer, null, 4));
+    const cwd = process.cwd().includes(folderName) ? process.cwd() : process.env.INIT_CWD;
+    fs.writeFileSync(path.join(cwd, 'manifest.json'), JSON.stringify(answer, null, 4));
     done();
     log('Finished creating manifest.json file with data');
     log(answer);
