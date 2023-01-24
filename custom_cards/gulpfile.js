@@ -172,6 +172,14 @@ const rollupOutputOptions = {
     name: folderName
 };
 
+function getHeaders(token) {
+    return {
+        'Authorization': token,
+        'TF-RequestingApplication': 'TFCustomCardDevTools',
+        'Content-Type': 'application/json'
+    };
+}
+
 async function build() {
     const bundle = await rollup.rollup(rollupInputOptions);
     const gen = await bundle.generate(rollupOutputOptions);
@@ -260,9 +268,7 @@ gulp.task('auth-test', async () => {
 
     let response = await fetch(`${site.baseUrl}/api/users/current`, {
         method: 'get',
-        headers: {
-            'Authorization': site.restToken
-        }
+        headers: getHeaders(site.restToken)
     });    
 
     if (response.status === 200) {
@@ -333,10 +339,7 @@ gulp.task('push', async () => {
             isCurrent: true,
             isTransformDisabled: bypassServerTransform
         }),
-        headers: {
-            'Authorization': site.restToken,
-            'Content-Type': 'application/json'
-        }
+        headers: getHeaders(site.restToken)
     });
 
     if (response.status === 200) {
@@ -372,10 +375,7 @@ gulp.task('create', async () => {
     const response = await fetch(`${site.baseUrl}/api/customportlets/`, {
         method: 'post',
         body: JSON.stringify(body),
-        headers: {
-            'Authorization': site.restToken,
-            'Content-Type': 'application/json'
-        }
+        headers: getHeaders(site.restToken)
     });
 
     if (response.status === 200) {
@@ -413,9 +413,7 @@ gulp.task('upgrade', async () => {
 
     const response = await fetch(`${site.baseUrl}/api/customportlets/${customPortletId}/upgrade`, {
         method: 'post',
-        headers: {
-            'Authorization': site.restToken,
-        }
+        headers: getHeaders(site.restToken)
     });
 
     if (response.status === 200) {
